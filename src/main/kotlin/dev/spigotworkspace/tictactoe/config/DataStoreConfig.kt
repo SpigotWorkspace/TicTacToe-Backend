@@ -8,6 +8,6 @@ class DataStoreConfig {
 
     @Bean
     fun currentGames(): HashMap<String, String> {
-        return HashMap();
+        return HashMap()
     }
 }

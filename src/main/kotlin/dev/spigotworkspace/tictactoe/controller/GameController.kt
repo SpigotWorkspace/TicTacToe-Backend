@@ -16,13 +16,13 @@ class GameController @Autowired constructor(private val currentGames: HashMap<St
         var gameId: String
         var unique: Boolean
         do {
-            gameId = generateGameId();
-            unique = !currentGames.containsKey(gameId);
+            gameId = generateGameId()
+            unique = !currentGames.containsKey(gameId)
         } while (!unique)
 
         currentGames[gameId] = "test"
 
-        return gameId;
+        return gameId
     }
 
     private fun generateGameId(): String {
