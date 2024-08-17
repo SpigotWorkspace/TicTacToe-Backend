@@ -12,7 +12,7 @@ class GameController @Autowired constructor(private val currentGames: HashMap<St
 
     @MessageMapping("/createGame")
     @SendTo("/game/createGame")
-    fun place(@Header simpSessionId: String): String {
+    fun createGame(@Header simpSessionId: String): String {
         var gameId: String
         var unique: Boolean
         do {
