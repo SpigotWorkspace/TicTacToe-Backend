@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class VueJsTicTacToeApplication
+class TicTacToeApplication
 
 fun main(args: Array<String>) {
-	runApplication<VueJsTicTacToeApplication>(*args)
+	runApplication<TicTacToeApplication>(*args)
 }
