@@ -26,7 +26,7 @@ class GameController @Autowired constructor(private val currentGames: HashMap<St
     }
 
     private fun generateGameId(): String {
-        return (1..1)
+        return (1..9)
             .map { allowedChars.random() }
             .joinToString("")
     }
