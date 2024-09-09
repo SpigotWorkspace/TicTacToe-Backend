@@ -11,4 +11,9 @@ class DataStoreConfig {
     fun currentGames(): HashMap<String, Game> {
         return HashMap()
     }
+
+    @Bean
+    fun playerToGameId(): HashMap<String, String> {
+        return HashMap()
+    }
 }
