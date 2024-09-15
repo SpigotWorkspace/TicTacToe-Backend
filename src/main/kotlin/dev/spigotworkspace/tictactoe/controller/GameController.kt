@@ -5,8 +5,10 @@ import dev.spigotworkspace.tictactoe.pojo.Game
 import dev.spigotworkspace.tictactoe.pojo.enum.PlayerEnum
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.messaging.handler.annotation.DestinationVariable
 import org.springframework.messaging.handler.annotation.Header
 import org.springframework.messaging.handler.annotation.MessageMapping
+import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SendToUser
 import org.springframework.stereotype.Controller
 
@@ -37,7 +39,7 @@ class GameController @Autowired constructor(
 
     @MessageMapping("/joinGame")
     @SendToUser("/game/joinGame")
-    fun joinGame(@Header simpSessionId: String, gameId: String): BaseResult {
+    fun joinGame(@Header simpSessionId: String, gameId: String): BaseResult<String> {
         val game = currentGames[gameId] ?: return BaseResult.failure("Game '$gameId' does not exist")
 
         if (game.isFull()) {
@@ -56,6 +58,14 @@ class GameController @Autowired constructor(
     @SendToUser("/game/disconnect")
     fun disconnect(@Header simpSessionId: String) {
         //TODO
+    }
+
+    @MessageMapping("/click/{gameId}")
+    @SendTo("/game/click/{gameId}")
+    fun handleClick(@Header simpSessionId: String, @DestinationVariable gameId: String, index: Int): BaseResult<Array<String>> {
+        val game = currentGames[gameId] ?: return BaseResult.failure("Game '$gameId' does not exist")
+        val field = game.getField().apply { this[index] = "X" }
+        return BaseResult.success(field);
     }
 
     private fun generateGameId(): String {

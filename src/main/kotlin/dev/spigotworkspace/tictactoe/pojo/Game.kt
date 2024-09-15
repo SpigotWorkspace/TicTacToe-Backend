@@ -4,6 +4,7 @@ import dev.spigotworkspace.tictactoe.pojo.enum.PlayerEnum
 
 class Game(private var playerOne: String?){
     private var playerTwo: String? = null
+    private var field: Array<String> = Array(9) { "" }
 
     fun setPlayer(playerEnum: PlayerEnum, id: String?) {
         when (playerEnum) {
@@ -18,6 +19,10 @@ class Game(private var playerOne: String?){
 
     fun isPlayerOneInGame(): Boolean {
         return playerOne != null
+    }
+
+    fun getField(): Array<String> {
+        return field;
     }
 }
 

@@ -1,17 +1,17 @@
 package dev.spigotworkspace.tictactoe.pojo
 
 import dev.spigotworkspace.tictactoe.pojo.enum.ResultStatus
-class BaseResult(
+class BaseResult<T>(
     var resultStatus: ResultStatus,
-    var resultValue: String?,
+    var resultValue: T?,
     var errorMessage: String? = null
 ) {
     companion object {
-        fun success(resultValue: String): BaseResult {
+        fun <T> success(resultValue: T): BaseResult<T> {
             return BaseResult(ResultStatus.SUCCESS, resultValue)
         }
 
-        fun failure(errorMessage: String): BaseResult {
+        fun <T> failure(errorMessage: String): BaseResult<T> {
             return BaseResult(ResultStatus.FAILURE, null, errorMessage)
         }
     }
