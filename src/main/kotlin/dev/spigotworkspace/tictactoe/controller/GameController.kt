@@ -11,6 +11,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SendToUser
 import org.springframework.stereotype.Controller
+import org.springframework.util.StringUtils
 
 @Controller
 class GameController @Autowired constructor(
@@ -64,8 +65,23 @@ class GameController @Autowired constructor(
     @SendTo("/game/click/{gameId}")
     fun handleClick(@Header simpSessionId: String, @DestinationVariable gameId: String, index: Int): BaseResult<Array<String>> {
         val game = currentGames[gameId] ?: return BaseResult.failure("Game '$gameId' does not exist")
-        val field = game.getField().apply { this[index] = "X" }
-        return BaseResult.success(field);
+        if(playerToGameId[simpSessionId] != gameId) {
+            return BaseResult.failure("Player is not part of the game '$gameId'")
+        }
+
+        if (!game.isPlayerOnTurn(simpSessionId)) {
+            return BaseResult.success(game.field)
+        }
+
+        val field = game.field.apply {
+            if (!StringUtils.hasText(this[index])) {
+                val char: String = if(game.playerOnTurn == PlayerEnum.ONE) "X" else "O"
+                this[index] = char
+                game.switchTurn()
+            }
+        }
+
+        return BaseResult.success(field)
     }
 
     private fun generateGameId(): String {
