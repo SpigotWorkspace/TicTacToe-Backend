@@ -3,7 +3,7 @@ package dev.spigotworkspace.tictactoe.pojo
 class GameResult {
     var winner: String? = null
         private set
-    var cancelled: Boolean = false;
+    var cancelled: Boolean = false
     val field: Array<String> = Array(9) { "" }
 
 

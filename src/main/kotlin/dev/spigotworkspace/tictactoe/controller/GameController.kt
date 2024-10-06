@@ -63,7 +63,7 @@ class GameController @Autowired constructor(
         if(playerToGameId[simpSessionId] != gameId) {
             return BaseResult.failure("Player is not part of the game '$gameId'")
         }
-        val gameResult = game.result;
+        val gameResult = game.result
 
         gameResult.cancelled = true
 
@@ -80,7 +80,7 @@ class GameController @Autowired constructor(
             return BaseResult.failure("Player is not part of the game '$gameId'")
         }
 
-        val gameResult = game.result;
+        val gameResult = game.result
         if (!game.isPlayerOnTurn(simpSessionId)) {
             return BaseResult.success(gameResult)
         }
