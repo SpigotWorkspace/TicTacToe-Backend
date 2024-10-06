@@ -2,6 +2,7 @@ package dev.spigotworkspace.tictactoe.controller
 
 import dev.spigotworkspace.tictactoe.pojo.BaseResult
 import dev.spigotworkspace.tictactoe.pojo.Game
+import dev.spigotworkspace.tictactoe.pojo.GameResult
 import dev.spigotworkspace.tictactoe.pojo.enum.PlayerEnum
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -55,33 +56,67 @@ class GameController @Autowired constructor(
 
         return BaseResult.success(gameId)
     }
-    @MessageMapping("/disconnect")
-    @SendToUser("/game/disconnect")
-    fun disconnect(@Header simpSessionId: String) {
-        //TODO
+    @MessageMapping("/disconnect/{gameId}")
+    @SendTo("/game/click/{gameId}")
+    fun disconnect(@Header simpSessionId: String, @DestinationVariable gameId: String): BaseResult<GameResult> {
+        val game = currentGames[gameId] ?: return BaseResult.failure("Game '$gameId' does not exist")
+        if(playerToGameId[simpSessionId] != gameId) {
+            return BaseResult.failure("Player is not part of the game '$gameId'")
+        }
+        val gameResult = game.result;
+
+        gameResult.cancelled = true
+
+        //TODO: Delete from currentGames and playerToGameId
+
+        return BaseResult.success(gameResult)
     }
 
     @MessageMapping("/click/{gameId}")
     @SendTo("/game/click/{gameId}")
-    fun handleClick(@Header simpSessionId: String, @DestinationVariable gameId: String, index: Int): BaseResult<Array<String>> {
+    fun handleClick(@Header simpSessionId: String, @DestinationVariable gameId: String, index: Int): BaseResult<GameResult> {
         val game = currentGames[gameId] ?: return BaseResult.failure("Game '$gameId' does not exist")
         if(playerToGameId[simpSessionId] != gameId) {
             return BaseResult.failure("Player is not part of the game '$gameId'")
         }
 
+        val gameResult = game.result;
         if (!game.isPlayerOnTurn(simpSessionId)) {
-            return BaseResult.success(game.field)
+            return BaseResult.success(gameResult)
         }
 
-        val field = game.field.apply {
+        gameResult.field.apply {
             if (!StringUtils.hasText(this[index])) {
-                val char: String = if(game.playerOnTurn == PlayerEnum.ONE) "X" else "O"
+                val char: String = game.playerOnTurn.sign
                 this[index] = char
                 game.switchTurn()
             }
         }
 
-        return BaseResult.success(field)
+        checkWinner(gameResult)
+
+        return BaseResult.success(gameResult)
+    }
+
+    fun checkWinner(gameResult: GameResult) {
+        val field = gameResult.field
+        val winCombinations = arrayOf(
+            arrayOf(0, 1, 2),
+            arrayOf(3, 4, 5),
+            arrayOf(6, 7, 8),
+            arrayOf(0, 3, 6),
+            arrayOf(1, 4, 7),
+            arrayOf(2, 5, 8),
+            arrayOf(0, 4, 8),
+            arrayOf(2, 4, 6)
+        )
+
+        for (combination in winCombinations) {
+            val (a, b, c) = combination
+            if (field[a].isNotEmpty() && field[a] == field[b] && field[a] == field[c]) {
+                gameResult.setWinner(field[a])
+            }
+        }
     }
 
     private fun generateGameId(): String {

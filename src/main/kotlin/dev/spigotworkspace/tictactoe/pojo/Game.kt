@@ -5,7 +5,7 @@ import dev.spigotworkspace.tictactoe.pojo.enum.PlayerEnum
 class Game(private var playerOne: String?){
     private var playerTwo: String? = null
     var playerOnTurn: PlayerEnum = PlayerEnum.ONE
-    val field: Array<String> = Array(9) { "" }
+    val result = GameResult()
 
     fun setPlayer(playerEnum: PlayerEnum, simpSessionId: String?) {
         when (playerEnum) {
