@@ -39,9 +39,9 @@ class GameController @Autowired constructor(
         return gameId
     }
 
-    @MessageMapping("/joinGame")
-    @SendToUser("/game/joinGame")
-    fun joinGame(@Header simpSessionId: String, gameId: String): BaseResult<String> {
+    @MessageMapping("/joinGame/{gameId}")
+    @SendTo("/game/joinGame/{gameId}")
+    fun joinGame(@Header simpSessionId: String, @DestinationVariable gameId: String): BaseResult<String> {
         val game = currentGames[gameId] ?: return BaseResult.failure("Game '$gameId' does not exist")
 
         if (game.isFull()) {
@@ -67,7 +67,8 @@ class GameController @Autowired constructor(
 
         gameResult.cancelled = true
 
-        //TODO: Delete from currentGames and playerToGameId
+        currentGames.remove(gameId)
+        playerToGameId.remove(simpSessionId)
 
         return BaseResult.success(gameResult)
     }
