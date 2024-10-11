@@ -3,10 +3,11 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.6"
 	kotlin("jvm") version "1.9.24"
 	kotlin("plugin.spring") version "1.9.24"
+	war
 }
 
 group = "dev.spigotworkspace"
-version = "0.0.1-SNAPSHOT"
+version = "1.0.0-SNAPSHOT"
 
 java {
 	toolchain {
